@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 40px;
+    gap: 14px;
   }
 
   .title {
@@ -36,7 +36,7 @@
     font-weight: bold;
     letter-spacing: 6px;
     margin: 0;
-    line-height: 1;
+    line-height: 0.95;
     text-shadow: 0 0 25px rgba(255,255,255,0.35);
   }
 
@@ -58,9 +58,9 @@
   }
 
   .menu-right {
-    perspective: 1100px;
-    width: 42vw;
-    height: 55vh;
+    perspective: 1400px;
+    width: 55vw;
+    height: 78vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,80 +68,84 @@
 
   .scene {
     position: relative;
-    width: 480px;
-    height: 340px;
+    width: 680px;
+    height: 480px;
+    max-width: 90%;
+    max-height: 90%;
     transform-style: preserve-3d;
     animation: rotateScene 16s linear infinite;
   }
 
   @keyframes rotateScene {
-    from { transform: rotateX(18deg) rotateY(0deg); }
-    to   { transform: rotateX(18deg) rotateY(360deg); }
-  }
-
-  .court {
-    position: absolute;
-    inset: 0;
-    border: 2px solid rgba(255,255,255,0.25);
-    transform: translateZ(0px);
-  }
-  .court::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 0;
-    border-left: 2px dashed rgba(255,255,255,0.2);
+    from { transform: rotateX(16deg) rotateY(0deg); }
+    to   { transform: rotateX(16deg) rotateY(360deg); }
   }
 
   .paddle {
     position: absolute;
-    top: 50%;
-    width: 16px;
-    height: 90px;
-    border-radius: 4px;
-    background: linear-gradient(135deg, #ffffff 0%, #dcdcdc 40%, #8f8f8f 70%, #ffffff 100%);
-    box-shadow:
-      0 0 18px rgba(255,255,255,0.85),
-      inset 0 0 10px rgba(255,255,255,0.9);
-  }
-  .paddle-left {
     left: 30px;
-    animation: floatLeft 4.5s ease-in-out infinite;
+    top: 50%;
+    width: 18px;
+    height: 100px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e2e2 40%, #8a8a8a 70%, #ffffff 100%);
+    box-shadow:
+      0 0 25px rgba(255,255,255,0.9),
+      inset 0 0 12px rgba(255,255,255,0.95);
+    animation: paddleLeft 6s ease-in-out infinite;
   }
   .paddle-right {
+    left: auto;
     right: 30px;
-    animation: floatRight 3.8s ease-in-out infinite;
+    animation: paddleRight 6s ease-in-out infinite;
   }
 
-  @keyframes floatLeft {
-    0%, 100% { transform: translateY(-75%) translateZ(15px); }
-    50%      { transform: translateY(-15%) translateZ(15px); }
+  .paddle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,0.95) 48%, transparent 65%);
+    mix-blend-mode: overlay;
+    animation: glare 16s linear infinite;
   }
-  @keyframes floatRight {
-    0%, 100% { transform: translateY(-20%) translateZ(-15px); }
-    50%      { transform: translateY(-80%) translateZ(-15px); }
+  @keyframes glare {
+    0%   { transform: translateX(-160%); opacity: 1; }
+    45%  { transform: translateX(160%); opacity: 0.15; }
+    50%  { transform: translateX(160%); opacity: 0.15; }
+    95%  { transform: translateX(-160%); opacity: 1; }
+    100% { transform: translateX(-160%); opacity: 1; }
+  }
+
+  @keyframes paddleLeft {
+    0%   { transform: translateY(-50%) translateZ(15px); }
+    50%  { transform: translateY(-25%) translateZ(15px); }
+    100% { transform: translateY(-50%) translateZ(15px); }
+  }
+  @keyframes paddleRight {
+    0%   { transform: translateY(-75%) translateZ(-15px); }
+    50%  { transform: translateY(-50%) translateZ(-15px); }
+    100% { transform: translateY(-75%) translateZ(-15px); }
   }
 
   .ball {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: radial-gradient(circle at 32% 28%, #ffffff 0%, #ffffff 25%, #cfcfcf 55%, #6f6f6f 100%);
-    box-shadow: 0 0 22px rgba(255,255,255,0.9);
-    animation: ballMove 9s ease-in-out infinite;
+    box-shadow: 0 0 26px rgba(255,255,255,0.95);
+    animation: ballMove 6s ease-in-out infinite;
   }
 
   @keyframes ballMove {
-    0%   { transform: translate(-430%, -50%) translateZ(0px); }
-    22%  { transform: translate(-120%, -120%) translateZ(40px); }
-    50%  { transform: translate(400%, -50%) translateZ(0px); }
-    72%  { transform: translate(-120%, 30%) translateZ(-40px); }
-    100% { transform: translate(-430%, -50%) translateZ(0px); }
+    0%   { transform: translate(-290px, -50%) translateZ(15px); }
+    25%  { transform: translate(0px, -50%) translateZ(55px); }
+    50%  { transform: translate(290px, -50%) translateZ(-15px); }
+    75%  { transform: translate(0px, -50%) translateZ(-55px); }
+    100% { transform: translate(-290px, -50%) translateZ(15px); }
   }
 
   /* ---------- GAME SCREEN ---------- */
@@ -181,7 +185,6 @@
   </div>
   <div class="menu-right">
     <div class="scene">
-      <div class="court"></div>
       <div class="paddle paddle-left"></div>
       <div class="paddle paddle-right"></div>
       <div class="ball"></div>
