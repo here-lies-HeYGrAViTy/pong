@@ -129,28 +129,27 @@
     100% { transform: translateX(-160%); opacity: 1; }
   }
 
-  /* ---- ball: billboarded sphere, always faces camera ---- */
+  /* ---- ball: true 3D orb, three intersecting shaded discs that rotate with the scene ---- */
   .ball-pos {
     position: absolute;
     top: 50%;
     left: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
   }
-  .ball-billboard {
-    width: 22px;
-    height: 22px;
-    animation: counterRotate 20s linear infinite;
-  }
-  @keyframes counterRotate {
-    from { transform: rotateY(0deg) rotateX(-58deg); }
-    to   { transform: rotateY(-360deg) rotateX(-58deg); }
-  }
-  .ball-sphere {
-    width: 22px;
-    height: 22px;
+  .ball-ring {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    margin-top: -12px;
     border-radius: 50%;
-    background: radial-gradient(circle at 32% 28%, #ffffff 0%, #ffffff 25%, #cfcfcf 55%, #6f6f6f 100%);
-    box-shadow: 0 0 26px rgba(255,255,255,0.95);
+    background: radial-gradient(circle at 32% 28%, #ffffff 0%, #ffffff 22%, #d4d4d4 50%, #6a6a6a 90%);
+    box-shadow: 0 0 24px rgba(255,255,255,0.9);
   }
+  .ball-ring.xz { transform: rotateX(90deg); }
+  .ball-ring.yz { transform: rotateY(90deg); }
 
   /* ---------- GAME SCREEN ---------- */
   #game-screen {
@@ -210,9 +209,9 @@
         </div>
       </div>
       <div class="ball-pos" id="ballPos">
-        <div class="ball-billboard">
-          <div class="ball-sphere"></div>
-        </div>
+        <div class="ball-ring xy"></div>
+        <div class="ball-ring xz"></div>
+        <div class="ball-ring yz"></div>
       </div>
     </div>
   </div>
