@@ -73,41 +73,53 @@
     max-width: 90%;
     max-height: 90%;
     transform-style: preserve-3d;
-    animation: rotateScene 16s linear infinite;
+    animation: rotateScene 20s linear infinite;
   }
 
   @keyframes rotateScene {
-    from { transform: rotateX(16deg) rotateY(0deg); }
-    to   { transform: rotateX(16deg) rotateY(360deg); }
+    from { transform: rotateX(58deg) rotateY(0deg); }
+    to   { transform: rotateX(58deg) rotateY(360deg); }
   }
 
-  .paddle {
+  /* ---- paddle: real 3D rectangular prism, 6 faces ---- */
+  .paddle-pos {
     position: absolute;
-    left: 30px;
     top: 50%;
-    width: 18px;
+    width: 16px;
     height: 100px;
-    border-radius: 4px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #ffffff 0%, #e2e2e2 40%, #8a8a8a 70%, #ffffff 100%);
-    box-shadow:
-      0 0 25px rgba(255,255,255,0.9),
-      inset 0 0 12px rgba(255,255,255,0.95);
-    animation: paddleLeft 6s ease-in-out infinite;
+    transform-style: preserve-3d;
   }
-  .paddle-right {
-    left: auto;
-    right: 30px;
-    animation: paddleRight 6s ease-in-out infinite;
-  }
+  .paddle-pos-left  { left: 30px; }
+  .paddle-pos-right { right: 30px; }
 
-  .paddle::before {
+  .paddle-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+  .face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 100px;
+    box-shadow: 0 0 18px rgba(255,255,255,0.35);
+  }
+  .face.front  { background: linear-gradient(135deg, #ffffff 0%, #e4e4e4 100%); transform: translateZ(8px); overflow: hidden; }
+  .face.back   { background: #6f6f6f; transform: rotateY(180deg) translateZ(8px); }
+  .face.right  { background: #b8b8b8; transform: rotateY(90deg) translateZ(8px); }
+  .face.left   { background: #9a9a9a; transform: rotateY(-90deg) translateZ(8px); }
+  .face.top    { width: 16px; height: 16px; top: 42px; left: 0; background: #ffffff; transform: rotateX(90deg) translateZ(50px); }
+  .face.bottom { width: 16px; height: 16px; top: 42px; left: 0; background: #4a4a4a; transform: rotateX(-90deg) translateZ(50px); }
+
+  .face.front::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,0.95) 48%, transparent 65%);
     mix-blend-mode: overlay;
-    animation: glare 16s linear infinite;
+    animation: glare 20s linear infinite;
   }
   @keyframes glare {
     0%   { transform: translateX(-160%); opacity: 1; }
@@ -117,35 +129,27 @@
     100% { transform: translateX(-160%); opacity: 1; }
   }
 
-  @keyframes paddleLeft {
-    0%   { transform: translateY(-50%) translateZ(15px); }
-    50%  { transform: translateY(-25%) translateZ(15px); }
-    100% { transform: translateY(-50%) translateZ(15px); }
-  }
-  @keyframes paddleRight {
-    0%   { transform: translateY(-75%) translateZ(-15px); }
-    50%  { transform: translateY(-50%) translateZ(-15px); }
-    100% { transform: translateY(-75%) translateZ(-15px); }
-  }
-
-  .ball {
+  /* ---- ball: billboarded sphere, always faces camera ---- */
+  .ball-pos {
     position: absolute;
     top: 50%;
     left: 50%;
+  }
+  .ball-billboard {
+    width: 22px;
+    height: 22px;
+    animation: counterRotate 20s linear infinite;
+  }
+  @keyframes counterRotate {
+    from { transform: rotateY(0deg) rotateX(-58deg); }
+    to   { transform: rotateY(-360deg) rotateX(-58deg); }
+  }
+  .ball-sphere {
     width: 22px;
     height: 22px;
     border-radius: 50%;
     background: radial-gradient(circle at 32% 28%, #ffffff 0%, #ffffff 25%, #cfcfcf 55%, #6f6f6f 100%);
     box-shadow: 0 0 26px rgba(255,255,255,0.95);
-    animation: ballMove 6s ease-in-out infinite;
-  }
-
-  @keyframes ballMove {
-    0%   { transform: translate(-290px, -50%) translateZ(15px); }
-    25%  { transform: translate(0px, -50%) translateZ(55px); }
-    50%  { transform: translate(290px, -50%) translateZ(-15px); }
-    75%  { transform: translate(0px, -50%) translateZ(-55px); }
-    100% { transform: translate(-290px, -50%) translateZ(15px); }
   }
 
   /* ---------- GAME SCREEN ---------- */
@@ -184,10 +188,32 @@
     <button id="play-btn" class="play-btn">PLAY</button>
   </div>
   <div class="menu-right">
-    <div class="scene">
-      <div class="paddle paddle-left"></div>
-      <div class="paddle paddle-right"></div>
-      <div class="ball"></div>
+    <div class="scene" id="scene">
+      <div class="paddle-pos paddle-pos-left" id="paddleLeftPos">
+        <div class="paddle-box">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face right"></div>
+          <div class="face left"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+      </div>
+      <div class="paddle-pos paddle-pos-right" id="paddleRightPos">
+        <div class="paddle-box">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face right"></div>
+          <div class="face left"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+      </div>
+      <div class="ball-pos" id="ballPos">
+        <div class="ball-billboard">
+          <div class="ball-sphere"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -197,6 +223,67 @@
   <div id="info">W/S — left paddle &nbsp;|&nbsp; ↑/↓ — right paddle &nbsp;|&nbsp; first to 7 wins &nbsp;|&nbsp; Space to restart</div>
 </div>
 
+<script>
+// ---- Menu demo physics: ball bounces between paddles, paddles track the ball ----
+(function() {
+  const paddleLeftPos = document.getElementById('paddleLeftPos');
+  const paddleRightPos = document.getElementById('paddleRightPos');
+  const ballPos = document.getElementById('ballPos');
+
+  const X_RANGE = 300;   // distance from center to each paddle's contact x
+  const Y_RANGE = 165;   // vertical travel limit
+  const LEFT_Z = 15, RIGHT_Z = -15;
+  const PADDLE_SPEED = 2.4;
+
+  let ball = { x: -X_RANGE, y: 0, dx: 1.6, dy: 0.5 };
+  let padL = { y: 0 };
+  let padR = { y: 0 };
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  function demoStep() {
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    if (ball.y > Y_RANGE || ball.y < -Y_RANGE) {
+      ball.dy *= -1;
+      ball.y = clamp(ball.y, -Y_RANGE, Y_RANGE);
+    }
+
+    // paddles chase the ball's y position
+    padL.y += clamp(ball.y - padL.y, -PADDLE_SPEED, PADDLE_SPEED);
+    padR.y += clamp(ball.y - padR.y, -PADDLE_SPEED, PADDLE_SPEED);
+    padL.y = clamp(padL.y, -Y_RANGE, Y_RANGE);
+    padR.y = clamp(padR.y, -Y_RANGE, Y_RANGE);
+
+    // bounce off paddles
+    if (ball.x <= -X_RANGE && ball.dx < 0) {
+      ball.dx *= -1;
+      ball.x = -X_RANGE;
+      ball.dy = clamp(ball.dy + (ball.y - padL.y) * 0.04, -3, 3);
+    }
+    if (ball.x >= X_RANGE && ball.dx > 0) {
+      ball.dx *= -1;
+      ball.x = X_RANGE;
+      ball.dy = clamp(ball.dy + (ball.y - padR.y) * 0.04, -3, 3);
+    }
+
+    // depth arc: interpolate between paddle depths, bulge toward camera mid-flight
+    const frac = (ball.x + X_RANGE) / (X_RANGE * 2);
+    const baseZ = LEFT_Z + (RIGHT_Z - LEFT_Z) * frac;
+    const bulge = Math.sin(frac * Math.PI) * 45;
+    const z = baseZ + bulge;
+
+    ballPos.style.transform = `translate(calc(-50% + ${ball.x}px), calc(-50% + ${ball.y}px)) translateZ(${z}px)`;
+    paddleLeftPos.style.transform = `translateY(calc(-50% + ${padL.y}px)) translateZ(${LEFT_Z}px)`;
+    paddleRightPos.style.transform = `translateY(calc(-50% + ${padR.y}px)) translateZ(${RIGHT_Z}px)`;
+
+    requestAnimationFrame(demoStep);
+  }
+
+  demoStep();
+})();
+</script>
 <script>
 const menuScreen = document.getElementById('menu-screen');
 const gameScreen = document.getElementById('game-screen');
